@@ -28,4 +28,5 @@ func main() {
 		panic(fmt.Sprintf("Failed to run server", err))
 	}
 	fmt.Println("Application run on", config.Api.ApiPort)
+	fmt.Println("hello")
 }
