@@ -69,3 +69,18 @@ func (s *AuthService) Login(dto *dtos.LoginDto) (string, string, string, error) 
 	return *accessToken, refreshToken, *user.Username, nil
 
 }
+
+func (s *AuthService) RefreshToken(dto *dtos.RefreshTokenDto) (string, string, string, error) {
+
+	accessToken := dto.Token
+	refreshToken := dto.RefreshToken
+
+	clm, err := s.jwtService.VerifyToken(accessToken)
+	if err != nil {
+		return "", "", "", err
+	}
+	fmt.Println(refreshToken)
+	fmt.Println(*clm.Username)
+
+	return "", "", "", nil
+}

@@ -54,10 +54,22 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName})
+	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName})
 	return
 }
 
-func (h *AuthHandler) RefreshToken() {
+func (h *AuthHandler) RefreshToken(ctx *gin.Context) {
 
+	dto := new(dtos.RefreshTokenDto)
+	if err := ctx.ShouldBindJSON(dto); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	accessToken, refreshToken, userName, loginErr := h.authService.RefreshToken(dto)
+	if loginErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": loginErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName})
+	return
 }

@@ -3,7 +3,9 @@ package jsonwebtoken
 import (
 	"ReservApp/src/cmd"
 	"ReservApp/src/db"
+	"ReservApp/src/db/models"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"time"
 
@@ -36,6 +38,36 @@ func (s *JwtService) GenrateJwtToken(identifire string, exp time.Duration) (*str
 		return nil, err
 	}
 	return &tokenString, err
+}
+
+func (s *JwtService) VerifyToken(tokenString string) (*models.User, error) {
+	var user *models.User
+	// Extract and verify the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(s.cfg.Api.JWTSecret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if token is valid
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid || claims["exp"].(float64) < float64(time.Now().Unix()) {
+		return nil, errors.New("invalid or expired token")
+	}
+
+	// Check if user exists
+	clm := claims["identifier"].(string)
+
+	if existsUser := s.psqlRepository.DB.Where("username = ?", clm).First(&user); existsUser.Error != nil {
+		return nil, errors.New("invalid or expired token")
+	}
+
+	return user, nil
 }
 
 func (s *JwtService) GenerateRefreshToken() string {
