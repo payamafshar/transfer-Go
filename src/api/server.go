@@ -15,7 +15,7 @@ func SetupServer(cfg *cmd.AppConfig) error {
 	gin.SetMode(gin.DebugMode)
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	setupRoutes(server)
-	return server.Run(fmt.Sprintf("0.0.0.0:%d", cfg.Api.ApiPort))
+	return server.Run(fmt.Sprintf("localhost:%d", cfg.Api.ApiPort))
 }
 
 func setupRoutes(server *gin.Engine) {
