@@ -24,12 +24,12 @@ func NewJwtService(cfg *cmd.AppConfig, r *db.PsqlRepository) *JwtService {
 	}
 }
 
-func (s *JwtService) GenrateJwtToken(identifire string, exp time.Duration) (*string, error) {
+func (s *JwtService) GenrateJwtToken(identifire string, expirationDay *int) (*string, error) {
 
 	claims := &AccessTokenClaims{
 		Identifier: identifire,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(exp)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(0, 0, *expirationDay)),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

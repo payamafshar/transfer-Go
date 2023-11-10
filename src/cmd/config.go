@@ -13,9 +13,11 @@ type AppConfig struct {
 }
 
 type ApiConfig struct {
-	ApiPort   int
-	ApiUrl    string
-	JWTSecret string
+	ApiPort                    int
+	ApiUrl                     string
+	JWTSecret                  string
+	JWTtokenExpiresDate        int
+	JWTrefreshTokenExpiresDate int
 }
 type PostgresConfig struct {
 	PgHost     string
@@ -38,7 +40,9 @@ func getPGConfig() (*PostgresConfig, error) {
 func SetupAppConfig() error {
 
 	ApiPort, err := strconv.Atoi(os.Getenv("API_PORT"))
-	apiConfig := &ApiConfig{ApiPort: ApiPort, ApiUrl: os.Getenv("API_URL"), JWTSecret: os.Getenv("JWT_SECRET")}
+	JWTtokenExpires, err := strconv.Atoi(os.Getenv("JWT_EXPIRES"))
+	JWTrefreshTokenExpires, err := strconv.Atoi(os.Getenv("JWT_REFRESHTOKEN_EXPIRES"))
+	apiConfig := &ApiConfig{ApiPort: ApiPort, ApiUrl: os.Getenv("API_URL"), JWTSecret: os.Getenv("JWT_SECRET"), JWTtokenExpiresDate: JWTtokenExpires, JWTrefreshTokenExpiresDate: JWTrefreshTokenExpires}
 	pgConfig, err := getPGConfig()
 	appConfig = &AppConfig{
 		Api:      apiConfig,

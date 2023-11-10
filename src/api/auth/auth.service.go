@@ -49,38 +49,54 @@ func (s *AuthService) Register(dto *dtos.RegisterUserDto) (error, *models.User) 
 	return nil, &user
 }
 
-func (s *AuthService) Login(dto *dtos.LoginDto) (string, string, string, error) {
+func (s *AuthService) Login(dto *dtos.LoginDto) (string, string, string, time.Time, error) {
 	var user *models.User
 	if existsUser := s.psqlRepository.DB.Where("username = ?", dto.Username).First(&user); existsUser.Error != nil {
-		return "", "", "", errors.New("invalid credentials")
+		return "", "", "", time.Time{}, errors.New("invalid credentials")
 	}
 	fmt.Println(*user.Password)
 	isCorrectHashedPassword := helper.CompareHashWithHashString(dto.Password, *user.Password)
 	if !isCorrectHashedPassword {
-		return "", "", "", errors.New("invalid credentials")
+		return "", "", "", time.Time{}, errors.New("invalid credentials")
 	}
-	accessToken, tokenErr := s.jwtService.GenrateJwtToken(*user.Username, time.Duration(time.Hour*24))
+	// passing nil to expirationdat and will get default value
+	accessToken, tokenErr := s.jwtService.GenrateJwtToken(*user.Username, &s.cfg.Api.JWTtokenExpiresDate)
 	if tokenErr != nil {
-		return "", "", "", tokenErr
+		return "", "", "", time.Time{}, tokenErr
 	}
 	refreshToken := s.jwtService.GenerateRefreshToken()
 	user.RefreshToken = &refreshToken
+	refreshTokenExpireDate := time.Now().AddDate(0, 0, s.cfg.Api.JWTrefreshTokenExpiresDate)
+	user.RefreshTokenExpireDate = &refreshTokenExpireDate
 	s.psqlRepository.DB.Save(user)
-	return *accessToken, refreshToken, *user.Username, nil
+	return *accessToken, refreshToken, *user.Username, refreshTokenExpireDate, nil
 
 }
 
-func (s *AuthService) RefreshToken(dto *dtos.RefreshTokenDto) (string, string, string, error) {
+func (s *AuthService) RefreshToken(dto *dtos.RefreshTokenDto) (string, string, string, time.Time, error) {
 
 	accessToken := dto.Token
 	refreshToken := dto.RefreshToken
 
-	clm, err := s.jwtService.VerifyToken(accessToken)
+	user, err := s.jwtService.VerifyToken(accessToken)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", time.Time{}, err
+	}
+
+	if *user.RefreshToken != refreshToken || (*user.RefreshTokenExpireDate).Before(time.Now()) {
+		return "", "", "", time.Time{}, errors.New("invalid client Request")
 	}
 	fmt.Println(refreshToken)
-	fmt.Println(*clm.Username)
+	//passing refreshToken expiresDate
+	jwtRefreshToken, errR := s.jwtService.GenrateJwtToken(*user.Username, &s.cfg.Api.JWTrefreshTokenExpiresDate)
+	jwtAccessToken, errA := s.jwtService.GenrateJwtToken(*user.Username, &s.cfg.Api.JWTtokenExpiresDate)
+	if errA != nil || errR != nil {
+		return "", "", "", time.Time{}, err
+	}
+	refreshTokenExpireDate := time.Now().AddDate(0, 0, s.cfg.Api.JWTrefreshTokenExpiresDate)
 
-	return "", "", "", nil
+	user.RefreshToken = jwtRefreshToken
+	user.RefreshTokenExpireDate = &refreshTokenExpireDate
+	s.psqlRepository.DB.Save(user)
+	return *jwtAccessToken, *jwtRefreshToken, *user.Username, refreshTokenExpireDate, nil
 }

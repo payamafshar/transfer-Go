@@ -47,14 +47,14 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	accessToken, refreshToken, userName, loginErr := h.authService.Login(dto)
+	accessToken, refreshToken, userName, refreshTokenExpireDate, loginErr := h.authService.Login(dto)
 
 	if loginErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": loginErr.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName})
+	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName, RefreshTokenExpiresDate: refreshTokenExpireDate})
 	return
 }
 
@@ -65,11 +65,11 @@ func (h *AuthHandler) RefreshToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	accessToken, refreshToken, userName, loginErr := h.authService.RefreshToken(dto)
+	accessToken, refreshToken, userName, refreshTokenExpireDate, loginErr := h.authService.RefreshToken(dto)
 	if loginErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": loginErr.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName})
+	ctx.JSON(http.StatusOK, &AuthenticateReponse{AccessToken: accessToken, RefreshToken: refreshToken, Username: userName, RefreshTokenExpiresDate: refreshTokenExpireDate})
 	return
 }
