@@ -58,6 +58,11 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 	return
 }
 
+func (h *AuthHandler) CurrentUser(ctx *gin.Context) {
+	user := ctx.MustGet("claims")
+	ctx.JSON(http.StatusOK, user)
+	return
+}
 func (h *AuthHandler) RefreshToken(ctx *gin.Context) {
 
 	dto := new(dtos.RefreshTokenDto)

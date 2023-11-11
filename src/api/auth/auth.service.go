@@ -72,7 +72,6 @@ func (s *AuthService) Login(dto *dtos.LoginDto) (string, string, string, time.Ti
 	return *accessToken, refreshToken, *user.Username, refreshTokenExpireDate, nil
 
 }
-
 func (s *AuthService) RefreshToken(dto *dtos.RefreshTokenDto) (string, string, string, time.Time, error) {
 
 	accessToken := dto.Token
