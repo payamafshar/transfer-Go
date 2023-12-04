@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-type AuthService struct {
-	cfg            *cmd.AppConfig
-	jwtService     *jsonwebtoken.JwtService
-	psqlRepository *db.PsqlRepository
+type IAuthServices interface {
+	Register(dto *dtos.RegisterUserDto) (error, *models.User)
+	Login(dto *dtos.LoginDto) (string, string, string, time.Time, error)
+	RefreshToken(dto *dtos.RefreshTokenDto) (string, string, string, time.Time, error)
 }
 
 func NewAuthService(cfg *cmd.AppConfig) *AuthService {
@@ -28,6 +28,12 @@ func NewAuthService(cfg *cmd.AppConfig) *AuthService {
 	}
 }
 
+type AuthService struct {
+	cfg            *cmd.AppConfig
+	jwtService     *jsonwebtoken.JwtService
+	psqlRepository *db.PsqlRepository
+}
+
 func (s *AuthService) Register(dto *dtos.RegisterUserDto) (error, *models.User) {
 
 	fmt.Println(dto.UserName)
@@ -35,7 +41,7 @@ func (s *AuthService) Register(dto *dtos.RegisterUserDto) (error, *models.User) 
 
 		return errors.New("user already exist"), nil
 	}
-
+	//test
 	hashedPassword, err := helper.GenerateHash(dto.Password)
 	if err != nil {
 		return err, nil
