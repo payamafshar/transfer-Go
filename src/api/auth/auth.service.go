@@ -36,7 +36,7 @@ type AuthService struct {
 
 func (s *AuthService) Register(dto *dtos.RegisterUserDto) (error, *models.User) {
 
-	fmt.Println(dto.UserName)
+	fmt.Println(dto.UserName, "12213")
 	if existUser := s.psqlRepository.DB.Where("username = ?", dto.UserName).First(&models.User{}); existUser.Error == nil {
 
 		return errors.New("user already exist"), nil

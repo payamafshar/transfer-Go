@@ -29,7 +29,16 @@ services:
       - "5432:5432"
     volumes:
       - appData:/var/lib/postgresql/data
-
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5080:80"
 volumes:
   appData:
 

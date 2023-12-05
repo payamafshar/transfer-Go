@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		panic("Failed to setup app config")
 	}
-	fmt.Println("Application run  sda on", config.Api.ApiPort)
+	fmt.Println("Application run  sdas on", config.Api.ApiPort)
 	fmt.Println("hello")
 	err = api.SetupServer(config)
 	if err != nil {
