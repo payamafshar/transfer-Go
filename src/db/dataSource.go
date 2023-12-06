@@ -24,6 +24,6 @@ func Init() *gorm.DB {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	db.AutoMigrate(&models.Book{}, &models.User{})
+	db.AutoMigrate(&models.Book{}, &models.User{}, &models.Account{}, &models.Transfer{}, &models.Entrie{})
 	return db
 }

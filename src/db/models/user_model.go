@@ -13,4 +13,6 @@ type User struct {
 	Password               *string    `json:"passowrd"`
 	RefreshToken           *string    `json:"refresh_token"`
 	RefreshTokenExpireDate *time.Time `json:"refreshToken_expiresDate"`
+	AccountId              int        `gorm:"foreignKey"`
+	Account                Account
 }

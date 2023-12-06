@@ -1,6 +1,7 @@
 package api
 
 import (
+	accountroutes "ReservApp/src/api/account/accountRoutes"
 	authroutes "ReservApp/src/api/auth/authRoutes"
 	"ReservApp/src/cmd"
 	"fmt"
@@ -22,4 +23,5 @@ func setupRoutes(server *gin.Engine) {
 	api := server.Group("api")
 	v1 := api.Group("v1")
 	authroutes.SetupAuthRoutes(v1)
+	accountroutes.SetupAccountRoutes(v1)
 }

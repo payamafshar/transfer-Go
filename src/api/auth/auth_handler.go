@@ -59,7 +59,7 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 }
 
 func (h *AuthHandler) CurrentUser(ctx *gin.Context) {
-	user := ctx.MustGet("claims")
+	user := ctx.MustGet("user")
 	ctx.JSON(http.StatusOK, user)
 	return
 }

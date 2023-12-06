@@ -18,6 +18,6 @@ RUN go install github.com/cespare/reflex@latest
 # Expose port 5050
 EXPOSE 5050
 
-CMD reflex -g '*.go' go run main.go --start-service
+CMD reflex -g "*.go" go run main.go --start-service
 
 

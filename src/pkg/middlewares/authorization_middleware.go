@@ -39,7 +39,7 @@ func AuthorizationMiddleware() gin.HandlerFunc {
 			unauthorized(ctx)
 			return
 		}
-		ctx.Set("claims", user)
+		ctx.Set("user", user)
 		ctx.Next()
 	}
 }
