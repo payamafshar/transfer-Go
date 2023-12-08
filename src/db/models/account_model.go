@@ -8,7 +8,7 @@ import (
 
 type Account struct {
 	gorm.Model
-	Id        int        `json:"id" gorm:"primaryKey autoIncrement"`
+	Id        int        `json:"id" gorm:"primaryKey,AUTO_INCREMENT"`
 	Owner     string     `json:"owner"`
 	Balance   int64      `json:"balance"`
 	Currency  string     `json:"currency"`
