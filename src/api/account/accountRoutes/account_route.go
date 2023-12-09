@@ -14,6 +14,7 @@ func SetupAccountRoutes(group *gin.RouterGroup) {
 	accountRoute.POST("/create", middlewares.AuthorizationMiddleware(), accountHandler.Create)
 	accountRoute.GET("/test", middlewares.AuthorizationMiddleware(), accountHandler.FindAll)
 	accountRoute.GET("/:id", accountHandler.GetById)
+	//TODO:test update with multiple dto parameters
 	accountRoute.PUT("/:id", middlewares.AuthorizationMiddleware(), accountHandler.Update)
 	accountRoute.DELETE("/:id", middlewares.AuthorizationMiddleware(), accountHandler.Delete)
 }
