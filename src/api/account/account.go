@@ -7,3 +7,9 @@ type GetListAccountRequest struct {
 	PageSize int `form:"pageSize" binding:"min=5,max=10"`
 	PageId   int `form:"pageId" binding:"min=1"`
 }
+type UpdateAccountRequest struct {
+	Id int `uri:"id" binding:"required,min=1"`
+}
+type DeleteAccountRequest struct {
+	Id int `uri:"id" binding:"required,min=1"`
+}

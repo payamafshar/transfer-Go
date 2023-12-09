@@ -75,8 +75,38 @@ func (h *AccountHandler) FindAll(ctx *gin.Context) {
 	ctx.JSON(http.StatusAccepted, accounts)
 }
 func (h *AccountHandler) Update(ctx *gin.Context) {
+	var req UpdateAccountRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	dto := new(dtos.UpdateAccountDto)
+	if err := ctx.ShouldBindJSON(dto); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	account, err := h.AccountService.Update(dto, req.Id)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusAccepted, account)
+	return
 
 }
 func (h *AccountHandler) Delete(ctx *gin.Context) {
+	var req UpdateAccountRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
+	account, err := h.AccountService.Delete(req.Id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, account)
+	return
 }

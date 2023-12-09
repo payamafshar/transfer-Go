@@ -6,6 +6,7 @@ import (
 	"ReservApp/src/db"
 	"ReservApp/src/db/models"
 	"errors"
+	"strings"
 )
 
 type AccountService struct {
@@ -53,9 +54,31 @@ func (s *AccountService) FindAll(pageSize int, page int) (*[]models.Account, err
 	}
 	return &accounts, nil
 }
-func (s *AccountService) Update() {
+func (s *AccountService) Update(dto *dtos.UpdateAccountDto, Id int) (*models.Account, error) {
 
+	var account models.Account
+	if findedAccount := s.psqlRepository.DB.Where("id = ?", Id).First(&account); findedAccount.Error != nil {
+		return nil, errors.New("Account Not Found")
+	}
+	if strings.TrimSpace(dto.Currency) != "" {
+		account.Currency = dto.Currency
+	}
+	result := s.psqlRepository.DB.Save(&account)
+	if result.RowsAffected > 0 {
+		return &account, nil
+	}
+	return nil, errors.New("update Unsuccessfully")
 }
-func (s *AccountService) Delete() {
+func (s *AccountService) Delete(Id int) (*models.Account, error) {
 
+	var account models.Account
+	if findedAccount := s.psqlRepository.DB.Where("id = ?", Id).First(&account); findedAccount.Error != nil {
+		return nil, errors.New("Account Not Found")
+	}
+	result := s.psqlRepository.DB.Where("id = ?", Id).Delete(&account)
+
+	if result.RowsAffected > 0 {
+		return &account, nil
+	}
+	return nil, result.Error
 }
