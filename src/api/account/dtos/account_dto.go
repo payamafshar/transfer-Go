@@ -1,8 +1,8 @@
 package dtos
 
 type CreateAccountDto struct {
-	Currency string `json:"currency,omitempty" binding:"required,oneof=EUR USD"`
+	Currency string `json:"currency,omitempty" binding:"required,currency"`
 }
 type UpdateAccountDto struct {
-	Currency string `json:"currency,omitempty" binding:"oneof=EUR USD"`
+	Currency string `json:"currency,omitempty" binding:"currency"`
 }
