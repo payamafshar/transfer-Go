@@ -9,9 +9,9 @@ import (
 type Transfer struct {
 	gorm.Model
 	Id            int        `json:"id" gorm:"primaryKey autoIncrement"`
-	FromAccountID string     `json:"from_accountId"`
+	FromAccountID int        `json:"from_accountId"`
 	FromAccount   Account    `gorm:"foreignKey:FromAccountID"`
-	ToAccountID   string     `json:"to_accountId"`
+	ToAccountID   int        `json:"to_accountId"`
 	ToAccount     Account    `gorm:"foreignKey:ToAccountID"`
 	Amount        int64      `json:"amount"`
 	CreatedAt     *time.Time `gorm:"column:created_at" json:"created_at"`
